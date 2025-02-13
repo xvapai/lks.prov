@@ -49,6 +49,7 @@ sudo make install
 s3fs bucketlk-opai s3-bucket -o iam_role=Permisson_S3_DynamoDB -o use_cache=/tmp -o allow_other -o uid=1001 -o mp_umask=002 -o multireq_max=5 -o use_path_request_style -o url=https://s3-us-west-2.amazonaws.amazonaws.com
 
 //CONFIG RDS
+sudo yum install -y mysql *UNTUK JAGA-JAGA JIKA MYSQL TIDAK TERINSTALL
 mysql -h logmqtt-instance-1.clg00g0s0uq0.us-west-2.rds.amazonaws.com -u admin -p
 create database logmqtt;
 use logmqtt;
