@@ -1,0 +1,72 @@
+//INSTALL MQTT MOSQUITTO
+sudo amazon-linux-extras install epel
+sudo yum install -y mosquitto
+sudo nano /etc/mosquitto/mosquitto.conf
+* HILANGKAN TANDA PAGAR (#) PADA PORT 1883 (DI BAIGAN DEFAULT LISTENER)
+* INPUT  COMMAND (allow_anonymous false) pada bagian paling akhir file
+* KELUAR DARI FILE (/etc/mosquitto/mosquitto.conf)
+sudo touch /etc/mosquitto/passwd
+sudo mosquitto_passwd-b /etc/mosquitto/passwd <username> <password>
+sudo systemctl enable mosquitto.service
+sudo systemctl restart mosquitto.service
+sudo systemctl status mosquitto.service
+
+//INSTALL NODEJS && NODERED
+sudo yum install-y gcc-c++ make
+curl-fsSL https://rpm.nodesource.com/setup_16.x | sudo bash -
+sudo yum install-y nodejs
+sudo npm install -g --unsafe-perm node-red@3.1.15
+sudo npm install -g pm2
+pm2 start /usr/bin/node-red -- -v
+pm2 info node-red
+
+//COMMAND JAGA-JAGA KALO COOKIE NODERED BERMASALAH
+sudo npm install node-red-dashboard cookie0.7.2
+
+//CEK DYNAMODB
+aws dynamodb scan --table-name dynamodb_nourut --region us-west-2
+
+//CONFIG S3 BUCKET
+cd /mnt
+sudo mkdir s3-bucket 
+sudo chmod -R 777 s3-bucket
+cd s3-bucket ;touch test1.txt test2.txt
+* BALIK KE MNT
+cd /mnt
+sudo aws s3 sync s3-bucket s3://bucketlks-opai
+* BALIK KE HOME
+cd /home/ (KLIK TAB) 
+sudo yum install automake fuse fuse-devel gcc-c++ git libcurl-devel libxml2
+sudo yum install automake fuse fuse-devel gcc-c++ git libcurl-devel libxml2-devel make openssl-devel -y
+git clone https://github.com/s3fs-fuse/s3fs-fuse.git
+sudo nano /etc/fuse.conf
+* HAPUS TANDA PAGAR (#) pada (user_allow_other)
+cd s3fs-fuse
+./autogen.sh
+./configure --prefix=/usr --with-openssl
+make
+sudo make install
+s3fs bucketlk-opai s3-bucket -o iam_role=Permisson_S3_DynamoDB -o use_cache=/tmp -o allow_other -o uid=1001 -o mp_umask=002 -o multireq_max=5 -o use_path_request_style -o url=https://s3-us-west-2.amazonaws.amazonaws.com
+
+//CONFIG RDS
+mysql -h logmqtt-instance-1.clg00g0s0uq0.us-west-2.rds.amazonaws.com -u admin -p
+create database logmqtt;
+use logmqtt;
+CREATE TABLE tbl_data ( id INT(11) AUTO_INCREMENT PRIMARY KEY, temperature VARCHAR(50) NULL, humidity VARCHAR(50) NULL, timestamp (TIMESTAMP) );
+exit
+
+//CONFIG PYTHON
+git clone http://github.com/handipradana/lksprov.git
+* UNTUK JAGA-JAGA JIKA GIT CLONE TIDAK TERINSTALL
+sudo yum install -y git
+pip3 install paho-mqtt boto3==1.16.15 typing-extensions python-dotenv 
+cd lksprov
+nano codepy.py
+* ISI FILE (code.py) SESUAI KETENTUAN
+* KELUAR DARI FILE (code.py)
+python3 codepy.py
+
+//CEK TABLE RDS
+mysql -h logmqtt-instance-1.clg00g0s0uq0.us-west-2.rds.amazonaws.com -u admin -p
+use logmqtt;
+select * from tbl_data;
