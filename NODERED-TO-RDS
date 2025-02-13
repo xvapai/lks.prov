@@ -1,0 +1,15 @@
+//CONFIG SUPAYA NODE RED BISA CONNECT KE RDS
+* OPEN NODERED
+* INSTALL (node-red-node-mysql)
+* ADD NODE (function)
+* MASUKKAN FUNCTION DIBAWAH INI :
+// msg.payload=[24, 'example-user']; 
+msg.topic = "INSERT INTO tbl_data (temperature, humidity) VALUES ('" + msg.payload.suhu + "', '" + msg.payload.kelembaban + "');"; 
+return msg;
+
+* ADD NODE (mysql)
+host : logmqtt-instance-1.clg00g0s0uq0.us-west-2.rds.amazonaws.com 
+port : 3306 
+user : admin 
+password : lks2023xl 
+database : logmqtt
